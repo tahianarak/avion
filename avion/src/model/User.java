@@ -13,6 +13,42 @@ public class User {
     private String mdp;
     private String adresse;
 
+
+
+    public static User authenticate(Connection connection, String email, String mdp) throws SQLException, Exception {
+        String query = "SELECT * FROM users WHERE email = ?";
+
+        if(connection==null)
+        {
+            connection=DatabaseConnection.getConnection();
+        }
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            preparedStatement.setString(1, email);
+
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+
+                if (resultSet.next()) {
+                    String storedPassword = resultSet.getString("mdp");
+
+                    if (mdp.equals(storedPassword)) {
+                        // Si le mot de passe correspond, on crée et renvoie l'objet User
+                        int idUser = resultSet.getInt("id_user");
+                        String nomComplet = resultSet.getString("nom_complet");
+                        boolean status = resultSet.getBoolean("status");
+                        String adresse = resultSet.getString("adresse");
+
+                        return new User(idUser, nomComplet, email, status, storedPassword, adresse);
+                    } else {
+                        throw new Exception("Mot de passe incorrect");
+                    }
+                } else {
+                    throw new Exception("Utilisateur non trouvé");
+                }
+            }
+        }
+    }
+
     // Constructeur
     public User(int idUser, String nomComplet, String email, boolean status, String mdp, String adresse) {
         this.idUser = idUser;

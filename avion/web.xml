@@ -10,11 +10,11 @@
      <servlet-class>mg.ituprom16.FrontController</servlet-class>
     <init-param>
         <param-name>package-source</param-name>
-        <param-value>WEB-INF/classes/controller/controler</param-value>
+        <param-value>WEB-INF/classes/avion/controller</param-value>
     </init-param>
     <init-param>
         <param-name>authentification</param-name>
-        <param-value>WEB-INF/auth.txt</param-value>
+        <param-value>WEB-INF/classes/auth.txt</param-value>
     </init-param>
 
     <init-param>

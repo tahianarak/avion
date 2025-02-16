@@ -4,7 +4,7 @@ SET lib=lib
 SET web=templates\
 SET xml=web.xml
 SET webapps="C:\Program Files\Apache Software Foundation\Tomcat 11.0\webapps"
-SET project=sprint16
+SET project=avion
 
 
 MD tempjava;
