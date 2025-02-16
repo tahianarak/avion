@@ -43,6 +43,29 @@ public class ModeleSiege {
     }
 
     // Méthode pour obtenir tous les modèles de sièges
+
+    public static List<ModeleSiege> getByModele(Connection connection,int idModeleAvion) {
+        List<ModeleSiege> modeleSieges = new ArrayList<>();
+        String query = "SELECT * FROM modele_siege where idModeleAvion="+idModeleAvion;
+
+        try (Statement statement = connection.createStatement();
+             ResultSet resultSet = statement.executeQuery(query)) {
+
+            while (resultSet.next()) {
+                int idTypeSiege = resultSet.getInt("id_type_siege");
+                int nombreSiege = resultSet.getInt("nombre_siege");
+
+                ModeleSiege modeleSiege = new ModeleSiege(idTypeSiege, idModeleAvion, nombreSiege);
+                modeleSieges.add(modeleSiege);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return modeleSieges;
+    }
+
     public static List<ModeleSiege> getAll(Connection connection) {
         List<ModeleSiege> modeleSieges = new ArrayList<>();
         String query = "SELECT * FROM modele_siege";

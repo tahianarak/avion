@@ -68,17 +68,13 @@
     </style>
 </head>
 <body>
-
+ <jsp:include page="sideBar.jsp" />
 <div class="main-container">
     <div class="icon-welcome">
         ✈️ <!-- Icône d'avion pour rappeler l'univers de la réservation -->
     </div>
     <h1>Bienvenue sur notre Service de Réservation de Billets d'Avion</h1>
     <p>Explorez les destinations, réservez vos billets et partez à l'aventure !</p>
-
-    <!-- Boutons d'action -->
-    <a href="/booking" class="btn-book-now">Réserver un Vol</a>
-    <a href="/login" class="btn-login">Se Connecter</a>
 </div>
 
 </body>

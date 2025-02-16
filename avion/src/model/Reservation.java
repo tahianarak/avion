@@ -1,6 +1,5 @@
 package avion.model;
 
-
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,14 +11,16 @@ public class Reservation {
     private int idUser;
     private int idVol;
     private int idTypeSiege;
+    private double prixBillet; // Nouvel attribut
 
     // Constructeur
-    public Reservation(int idReservation, Timestamp dateReservation, int idUser, int idVol, int idTypeSiege) {
+    public Reservation(int idReservation, Timestamp dateReservation, int idUser, int idVol, int idTypeSiege, double prixBillet) {
         this.idReservation = idReservation;
         this.dateReservation = dateReservation;
         this.idUser = idUser;
         this.idVol = idVol;
         this.idTypeSiege = idTypeSiege;
+        this.prixBillet = prixBillet; // Initialisation du nouvel attribut
     }
 
     // Getters et Setters
@@ -63,7 +64,15 @@ public class Reservation {
         this.idTypeSiege = idTypeSiege;
     }
 
-    // Méthode pour obtenir toutes les réservations
+    public double getPrixBillet() {
+        return prixBillet;
+    }
+
+    public void setPrixBillet(double prixBillet) {
+        this.prixBillet = prixBillet;
+    }
+
+    // Méthode pour obtenir toutes les réservations avec le prix du billet
     public static List<Reservation> getAll(Connection connection) {
         List<Reservation> reservations = new ArrayList<>();
         String query = "SELECT * FROM reservation";
@@ -77,8 +86,9 @@ public class Reservation {
                 int idUser = resultSet.getInt("id_user");
                 int idVol = resultSet.getInt("id_vol");
                 int idTypeSiege = resultSet.getInt("id_type_siege");
+                double prixBillet = resultSet.getDouble("prix_billet"); // Récupérer le prix du billet
 
-                Reservation reservation = new Reservation(idReservation, dateReservation, idUser, idVol, idTypeSiege);
+                Reservation reservation = new Reservation(idReservation, dateReservation, idUser, idVol, idTypeSiege, prixBillet);
                 reservations.add(reservation);
             }
 
@@ -89,29 +99,31 @@ public class Reservation {
         return reservations;
     }
 
-    // Méthode pour insérer une réservation
+    // Méthode pour insérer une réservation avec le prix du billet
     public static void insert(Connection connection, Reservation reservation) {
-        String query = "INSERT INTO reservation (date_reservation, id_user, id_vol, id_type_siege) VALUES (?, ?, ?, ?)";
+        String query = "INSERT INTO reservation (date_reservation, id_user, id_vol, id_type_siege, prix_billet) VALUES (?, ?, ?, ?, ?)";
         try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
             preparedStatement.setTimestamp(1, reservation.getDateReservation());
             preparedStatement.setInt(2, reservation.getIdUser());
             preparedStatement.setInt(3, reservation.getIdVol());
             preparedStatement.setInt(4, reservation.getIdTypeSiege());
+            preparedStatement.setDouble(5, reservation.getPrixBillet()); // Insérer le prix du billet
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
-    // Méthode pour mettre à jour une réservation
+    // Méthode pour mettre à jour une réservation avec le prix du billet
     public static void update(Connection connection, Reservation reservation) {
-        String query = "UPDATE reservation SET date_reservation = ?, id_user = ?, id_vol = ?, id_type_siege = ? WHERE id_reservation = ?";
+        String query = "UPDATE reservation SET date_reservation = ?, id_user = ?, id_vol = ?, id_type_siege = ?, prix_billet = ? WHERE id_reservation = ?";
         try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
             preparedStatement.setTimestamp(1, reservation.getDateReservation());
             preparedStatement.setInt(2, reservation.getIdUser());
             preparedStatement.setInt(3, reservation.getIdVol());
             preparedStatement.setInt(4, reservation.getIdTypeSiege());
-            preparedStatement.setInt(5, reservation.getIdReservation());
+            preparedStatement.setDouble(5, reservation.getPrixBillet()); // Mettre à jour le prix du billet
+            preparedStatement.setInt(6, reservation.getIdReservation());
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();

@@ -9,6 +9,16 @@ public class Avion {
     private int idAvion;
     private int idModeleAvion;
 
+    public ModeleAvion getModeleAvion() {
+        return modeleAvion;
+    }
+
+    public void setModeleAvion(ModeleAvion modeleAvion) {
+        this.modeleAvion = modeleAvion;
+    }
+
+    ModeleAvion modeleAvion;
+
     // Constructeur
     public Avion(int idAvion, int idModeleAvion) {
         this.idAvion = idAvion;
@@ -32,6 +42,26 @@ public class Avion {
         this.idModeleAvion = idModeleAvion;
     }
 
+    public static Avion getByIdAvion(Connection connection, int idAvion) {
+        Avion avion = null;
+        String query = "SELECT * FROM avion WHERE id_avion = ?";
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            preparedStatement.setInt(1, idAvion);
+
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                if (resultSet.next()) {
+                    int idModeleAvion = resultSet.getInt("id_modele_avion");
+                    avion = new Avion(idAvion, idModeleAvion);
+                }
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return avion;
+    }
     // Méthode pour obtenir tous les avions
     public static List<Avion> getAll(Connection connection) {
         List<Avion> avions = new ArrayList<>();
@@ -45,6 +75,7 @@ public class Avion {
                 int idModeleAvion = resultSet.getInt("id_modele_avion");
 
                 Avion avion = new Avion(idAvion, idModeleAvion);
+                avion.setModeleAvion(ModeleAvion.getById(connection,idModeleAvion));
                 avions.add(avion);
             }
 

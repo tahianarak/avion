@@ -32,8 +32,32 @@ public class VilleDesservie {
         this.description = description;
     }
 
+    // Méthode pour obtenir une ville desservie par son id
+    public static VilleDesservie getById(Connection connection, int idVille) {
+        VilleDesservie villeDesservie = null;
+        String query = "SELECT * FROM ville_desservie WHERE id_ville = ?";
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            preparedStatement.setInt(1, idVille);
+
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                if (resultSet.next()) {
+                    String description = resultSet.getString("descritpion");
+                    villeDesservie = new VilleDesservie(idVille, description);
+                }
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return villeDesservie;
+    }
+
     // Méthode pour obtenir toutes les villes desservies
-    public static List<VilleDesservie> getAll(Connection connection) {
+    public static List<VilleDesservie> getAll(Connection connection) throws SQLException {
+
+
         List<VilleDesservie> villesDesservies = new ArrayList<>();
         String query = "SELECT * FROM ville_desservie";
 
@@ -42,7 +66,7 @@ public class VilleDesservie {
 
             while (resultSet.next()) {
                 int idVille = resultSet.getInt("id_ville");
-                String description = resultSet.getString("description");
+                String description = resultSet.getString("descritpion");
 
                 VilleDesservie villeDesservie = new VilleDesservie(idVille, description);
                 villesDesservies.add(villeDesservie);
@@ -57,7 +81,7 @@ public class VilleDesservie {
 
     // Méthode pour insérer une ville desservie
     public static void insert(Connection connection, VilleDesservie villeDesservie) {
-        String query = "INSERT INTO ville_desservie (description) VALUES (?)";
+        String query = "INSERT INTO ville_desservie (descritpion) VALUES (?)";
         try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
             preparedStatement.setString(1, villeDesservie.getDescription());
             preparedStatement.executeUpdate();
@@ -68,7 +92,7 @@ public class VilleDesservie {
 
     // Méthode pour mettre à jour une ville desservie
     public static void update(Connection connection, VilleDesservie villeDesservie) {
-        String query = "UPDATE ville_desservie SET description = ? WHERE id_ville = ?";
+        String query = "UPDATE ville_desservie SET descritpion = ? WHERE id_ville = ?";
         try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
             preparedStatement.setString(1, villeDesservie.getDescription());
             preparedStatement.setInt(2, villeDesservie.getIdVille());

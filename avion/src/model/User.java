@@ -18,11 +18,6 @@ public class User {
     public static User authenticate(Connection connection, String email, String mdp) throws SQLException, Exception {
         String query = "SELECT * FROM users WHERE email = ?";
 
-        if(connection==null)
-        {
-            connection=DatabaseConnection.getConnection();
-        }
-
         try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
             preparedStatement.setString(1, email);
 

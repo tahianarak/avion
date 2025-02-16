@@ -42,6 +42,30 @@ public class ModeleAvion {
         this.dateFabrication = dateFabrication;
     }
 
+    // Méthode pour obtenir un modèle d'avion par son ID
+    public static ModeleAvion getById(Connection connection, int idModeleAvion) {
+        ModeleAvion modeleAvion = null;
+        String query = "SELECT * FROM modele_avion WHERE id_modele_avion = ?";
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            preparedStatement.setInt(1, idModeleAvion);
+
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                if (resultSet.next()) {
+                    String description = resultSet.getString("description");
+                    String dateFabrication = resultSet.getString("date_fabrication");
+
+                    modeleAvion = new ModeleAvion(idModeleAvion, description, dateFabrication);
+                }
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return modeleAvion;
+    }
+
     // Méthode pour obtenir tous les modèles d'avion
     public static List<ModeleAvion> getAll(Connection connection) {
         List<ModeleAvion> modelesAvion = new ArrayList<>();

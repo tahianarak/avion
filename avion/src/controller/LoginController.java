@@ -3,6 +3,7 @@ package avion.controller;
 
 import avion.model.ModeleAvion;
 import avion.model.User;
+import avion.service.UserService;
 import mg.ituprom16.affloader.ModelView;
 import mg.ituprom16.annotation.*;
 import mg.ituprom16.session.*;
@@ -23,7 +24,7 @@ public class LoginController
         try
         {
             ModelView mv=new ModelView("/accueil.jsp");
-            User user=User.authenticate(null,email,mdp);
+            User user=(new UserService()).verifyLogin(email,mdp);
             session.add("user",user);
             return  mv;
         }
