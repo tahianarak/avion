@@ -1,0 +1,4 @@
+admin 3
+manager 2
+Authentified 1
+free 0
