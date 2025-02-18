@@ -2,6 +2,7 @@ package avion.model;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class VolPrixTypeSiege {
@@ -9,6 +10,31 @@ public class VolPrixTypeSiege {
     private int idTypeSiege;
     private int idVol;
     private double prixUnitaire;
+
+
+    public static HashMap<Integer, VolPrixTypeSiege> getPrixByVol(Connection connection, int idVol) {
+        HashMap<Integer, VolPrixTypeSiege> volPrixTypeSiegesMap = new HashMap<>();
+        String query = "SELECT * FROM vol_prix_type_siege WHERE id_vol = ?";
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            preparedStatement.setInt(1, idVol);
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                while (resultSet.next()) {
+                    int idTypeSiege = resultSet.getInt("id_type_siege");
+                    double prixUnitaire = resultSet.getDouble("prix_unitaire");
+
+                    VolPrixTypeSiege volPrixTypeSiege = new VolPrixTypeSiege(idTypeSiege, idVol, prixUnitaire);
+                    volPrixTypeSiegesMap.put(idTypeSiege, volPrixTypeSiege); // Ajout dans le HashMap avec idTypeSiege comme clé
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return volPrixTypeSiegesMap;
+    }
+
+
 
     // Constructeur
     public VolPrixTypeSiege(int idTypeSiege, int idVol, double prixUnitaire) {

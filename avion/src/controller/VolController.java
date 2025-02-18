@@ -17,6 +17,7 @@ import java.util.Date;
 import mg.ituprom16.session.*;
 
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.List;
 
 import static avion.service.VolService.insertVolPrix;
@@ -65,10 +66,14 @@ public class VolController
             List<Avion> avions= AvionService.getAllAvion();
             Vol vol=VolService.getVolByID(idVol);
             List<TypeSiege> typeSieges=AvionService.getAllTypeSiege();
+            HashMap<Integer, Promotion> promotions=VolService.getPromByVol(idVol);
+            HashMap<Integer, VolPrixTypeSiege> volPrixTypeSieges=VolService.getPrixForVol(idVol);
             mv.addObject("vol",vol);
             mv.addObject("villes",villeDesservies);
             mv.addObject("avions",avions);
             mv.addObject("sieges",typeSieges);
+            mv.addObject("promotions",promotions);
+            mv.addObject("prix",volPrixTypeSieges);
         }
         catch (Exception e)
         {
@@ -120,20 +125,17 @@ public class VolController
 
             Date date = sdf.parse(duree);
             Time time = new Time(date.getTime());
+            List<TypeSiege> typeSieges=AvionService.getAllTypeSiege();
+            VolService service=new VolService();
             if(request.getParameter("idVol")==null)
             {
                 Vol vol = new Vol(-1, timestamp, description, idVilleDepart, idVilleArrivee, idAvion, time);
-                int idVol = (new VolService()).insertVol(vol);
-                List<TypeSiege> typeSieges=AvionService.getAllTypeSiege();
-                for (TypeSiege siege:typeSieges)
-                {
-                    VolService.insertVolPrix(new VolPrixTypeSiege(siege.getIdTypeSiege(),idVol,Double.valueOf(request.getParameter("prix_"+siege.getIdTypeSiege()))));
-                    VolService.insertPromoVol(new Promotion(-1,idVol,siege.getIdTypeSiege(),Double.valueOf(request.getParameter( "pourcentagePromo_"+siege.getIdTypeSiege())),Integer.valueOf(request.getParameter( "nbPlacesPromo_"+siege.getIdTypeSiege()))));
-                }
-            }else
+                service.createVolWithPrixAndPromos(timestamp,description,idVilleDepart,idVilleArrivee,idAvion,time,typeSieges,request);
+            }
+            else
             {
-                Vol vol=new Vol(Integer.valueOf(request.getParameter("idVol")), timestamp, description, idVilleDepart, idVilleArrivee, idAvion, time);
-                VolService.updateVol(vol);
+                int idVol=Integer.valueOf(request.getParameter("idVol"));
+                service.updateVolWithPrixAndPromos(request,typeSieges,idVol,timestamp,description,idVilleDepart,idVilleArrivee,idAvion,time);
             }
         }
         catch (Exception e)
