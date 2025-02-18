@@ -1,64 +1,80 @@
--- Insertion des données pour ville_desservie
-INSERT INTO ville_desservie (nom_ville) VALUES
+
+INSERT INTO type_siege (description) VALUES
+('Classe economique'),
+('Classe Affaires'),
+('Première Classe');
+
+INSERT INTO modele_avion (description, date_fabrication) VALUES
+('Boeing 737', '2005-03-15'),
+('Airbus A320', '2010-06-22'),
+('Boeing 777', '2017-09-05');
+
+
+INSERT INTO ville_desservie (descritpion) VALUES
 ('Paris'),
 ('Londres'),
 ('New York'),
 ('Tokyo'),
+('Berlin'),
 ('Sydney');
 
--- Insertion des données pour modele_avion
-INSERT INTO modele_avion (nom_modele) VALUES
-('Airbus A320'),
-('Boeing 737'),
-('Boeing 787');
-
--- Insertion des données pour avion
 INSERT INTO avion (id_modele_avion) VALUES
-(1),  -- Airbus A320
-(2),  -- Boeing 737
-(3);  -- Boeing 787
+(1),  -- Boeing 737
+(2),  -- Airbus A320
+(3);  -- Boeing 777
 
--- Insertion des données pour type_siege
-INSERT INTO type_siege (type_siege) VALUES
-('Économique'),
-('Affaires'),
-('Première');
-
--- Insertion des données pour vol
 INSERT INTO vol (date_vol, description, id_ville_depart, id_ville_arrivee, id_avion, duree) VALUES
-('2025-02-15 08:30:00', 'Vol direct', 1, 2, 1, '02:15:00'),  -- Paris -> Londres
-('2025-02-15 12:00:00', 'Vol direct', 2, 3, 2, '08:00:00'),  -- Londres -> New York
-('2025-02-16 09:00:00', 'Vol direct', 1, 4, 3, '11:00:00');  -- Paris -> Tokyo
+('2025-03-01 10:00:00', 'Vol Paris-Londres', 1, 2, 1, '01:30:00'),
+('2025-03-02 15:00:00', 'Vol Londres-New York', 2, 3, 2, '08:00:00'),
+('2025-03-03 08:00:00', 'Vol New York-Tokyo', 3, 4, 3, '14:00:00'),
+('2025-03-04 13:00:00', 'Vol Tokyo-Berlin', 4, 5, 1, '11:00:00'),
+('2025-03-05 11:00:00', 'Vol Berlin-Sydney', 5, 6, 2, '16:00:00');
 
--- Insertion des données pour users
-INSERT INTO users (username, email) VALUES
-('user1', 'user1@example.com'),
-('user2', 'user2@example.com'),
-('user3', 'user3@example.com');
 
--- Insertion des données pour reservation
-INSERT INTO reservation (date_reservation, id_user, id_vol, id_type_siege) VALUES
-('2025-01-15 10:00:00', 1, 1, 1),  -- Réservation 1 : Utilisateur 1, vol 1, siège économique
-('2025-01-16 11:30:00', 2, 2, 2),  -- Réservation 2 : Utilisateur 2, vol 2, siège affaires
-('2025-01-17 14:00:00', 3, 3, 3);  -- Réservation 3 : Utilisateur 3, vol 3, siège première
-
--- Insertion des données pour modele_siege
 INSERT INTO modele_siege (id_type_siege, id_modele_avion, nombre_siege) VALUES
-(1, 1, 150),  -- Économique, Airbus A320, 150 sièges
-(2, 2, 40),   -- Affaires, Boeing 737, 40 sièges
-(3, 3, 30);   -- Première, Boeing 787, 30 sièges
+(1, 1, 150),  -- Classe economique sur Boeing 737
+(2, 1, 30),   -- Classe Affaires sur Boeing 737
+(3, 1, 10),   -- Première Classe sur Boeing 737
+(1, 2, 120),  -- Classe economique sur Airbus A320
+(2, 2, 20),   -- Classe Affaires sur Airbus A320
+(3, 2, 8),    -- Première Classe sur Airbus A320
+(1, 3, 200),  -- Classe economique sur Boeing 777
+(2, 3, 50),   -- Classe Affaires sur Boeing 777
+(3, 3, 12);   -- Première Classe sur Boeing 777
 
--- Insertion des données pour vol_prix_type_siege
+
+INSERT INTO reservation (date_reservation, id_user, id_vol, id_type_siege, prix_billet) VALUES
+('2025-02-20 09:00:00', 1, 1, 1, 150.00),  --  vol Paris-Londres, Classe economique
+('2025-02-21 14:30:00', 2, 2, 2, 400.00),  --  vol Londres-New York, Classe Affaires
+('2025-02-22 12:00:00', 3, 3, 3, 800.00),  --  vol New York-Tokyo, Première Classe
+('2025-02-23 17:45:00', 4, 4, 1, 200.00),  --  vol Tokyo-Berlin, Classe economique
+('2025-02-24 18:30:00', 5, 5, 2, 350.00);  --  vol Berlin-Sydney, Classe Affaires
+
+
 INSERT INTO vol_prix_type_siege (id_type_siege, id_vol, prix_unitaire) VALUES
-(1, 1, 100.00),  -- Siège économique, vol 1, prix 100€
-(2, 2, 500.00),  -- Siège affaires, vol 2, prix 500€
-(3, 3, 1500.00); -- Siège première, vol 3, prix 1500€
+(1, 1, 150.00),  -- Classe economiques sur vol Paris-Londres
+(2, 1, 400.00),  -- Classe Affaires sur vol Paris-Londres
+(3, 1, 800.00),  -- Première Classe sur vol Paris-Londres
+(1, 2, 250.00),  -- Classe economiques sur vol Londres-New York
+(2, 2, 600.00),  -- Classe Affaires sur vol Londres-New York
+(3, 2, 1200.00), -- Première Classe sur vol Londres-New York
+(1, 3, 300.00),  -- Classe economiques sur vol New York-Tokyo
+(2, 3, 700.00),  -- Classe Affaires sur vol New York-Tokyo
+(3, 3, 1500.00), -- Première Classe sur vol New York-Tokyo
+(1, 4, 180.00),  -- Classe economiques sur vol Tokyo-Berlin
+(2, 4, 450.00),  -- Classe Affaires sur vol Tokyo-Berlin
+(3, 4, 900.00),  -- Première Classe sur vol Tokyo-Berlin
+(1, 5, 350.00),  -- Classe economiques sur vol Berlin-Sydney
+(2, 5, 750.00),  -- Classe Affaires sur vol Berlin-Sydney
+(3, 5, 1600.00); -- Première Classe sur vol Berlin-Sydney
 
--- Insertion des données pour promotion
+
 INSERT INTO promotion (id_vol, id_type_siege, remise, nb_place) VALUES
-(1, 1, 10.00, 50),  -- Promotion sur vol 1, siège économique, remise de 10%, 50 places
-(2, 2, 15.00, 20),  -- Promotion sur vol 2, siège affaires, remise de 15%, 20 places
-(3, 3, 20.00, 10);  -- Promotion sur vol 3, siège première, remise de 20%, 10 places
+(1, 1, 10.00, 2),  -- Promotion de 10 pour Classe economique sur vol Paris-Londres
+(2, 2, 15.00, 2),  -- Promotion de 15 pour Classe Affaires sur vol Londres-New York
+(3, 3, 20.00, 2),  -- Promotion de 20 pour Première Classe sur vol New York-Tokyo
+(4, 1, 5.00, 2),   -- Promotion de 5 pour Classe economique sur vol Tokyo-Berlin
+(5, 2, 10.00, 2);  -- Promotion de 10 pour Classe Affaires sur vol Berlin-Sydney
 
 
 
@@ -69,3 +85,7 @@ VALUES
   ('Carla Lefevre', 'carla.lefevre@example.com', false, 'carla789', '789 Boulevard Saint-Germain, 75006 Paris, France'),
   ('David Moreau', 'david.moreau@example.com', false, 'davidsupersecure', '101 Rue de la Rpublique, 69002 Lyon, France'),
   ('Emma Lemoine', 'emma.lemoine@example.com', false, 'emmapassword321', '202 Rue de la Libert, 13001 Marseille, France');
+
+  INSERT INTO heure_avant_apres_res (heure_av_res, heure_ap_res)
+VALUES 
+('05:00:00', '07:00:00');

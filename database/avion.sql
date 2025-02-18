@@ -54,6 +54,7 @@ CREATE TABLE reservation(
    id_user INTEGER NOT NULL,
    id_vol INTEGER NOT NULL,
    id_type_siege INTEGER NOT NULL,
+   prix_billet NUMERIC(15,2),
    PRIMARY KEY(id_reservation),
    FOREIGN KEY(id_user) REFERENCES users(id_user),
    FOREIGN KEY(id_type_siege) REFERENCES type_siege(id_type_siege),
@@ -87,3 +88,28 @@ CREATE table promotion
    remise NUMERIC(15,2),
    nb_place INTEGER
 );
+
+
+create table heure_avant_apres_res
+(
+   heure_av_res Time,
+   heure_ap_res Time
+);
+
+CREATE VIEW vue_vol_avion AS
+SELECT 
+    v.id_vol,
+    v.date_vol,
+    v.description AS vol_description,
+    v.duree,
+    v.id_ville_depart,
+    v.id_ville_arrivee,
+    v.id_avion,
+    a.id_modele_avion,
+    ma.description AS modele_avion_description
+FROM 
+    vol v
+JOIN 
+    avion a ON v.id_avion = a.id_avion
+JOIN 
+    modele_avion ma ON a.id_modele_avion = ma.id_modele_avion;

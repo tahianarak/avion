@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Accueil - Réservation de Billets d'Avion</title>
+    <title>Formulaire d'Insertion - Heure Avant Après Réservation</title>
     <style>
         /* Style général de la page */
         body {
@@ -41,8 +41,28 @@
             margin-bottom: 30px;
         }
 
-        .btn-book-now,
-        .btn-login {
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        label {
+            color: #00796b;
+            font-weight: bold;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        input[type="time"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+
+        .btn-submit {
             width: 100%;
             padding: 14px;
             background-color: #00796b;
@@ -52,15 +72,13 @@
             font-size: 18px;
             cursor: pointer;
             transition: background-color 0.3s;
-            margin-bottom: 20px;
         }
 
-        .btn-book-now:hover,
-        .btn-login:hover {
+        .btn-submit:hover {
             background-color: #004d40;
         }
 
-        .icon-welcome {
+        .icon-form {
             font-size: 60px;
             color: #00796b;
             margin-bottom: 20px;
@@ -68,14 +86,27 @@
     </style>
 </head>
 <body>
- <jsp:include page="sideBar.jsp" />
+<jsp:include page="sideBar.jsp" />
 <div class="main-container">
-    <div class="icon-welcome">
-        ✈️ <!-- Icône d'avion pour rappeler l'univers de la réservation -->
+    <div class="icon-form">
+        ⏰ <!-- Icône de montre pour rappeler l'heure -->
     </div>
-    <h1>Bienvenue sur notre Service de Réservation de Billets d'Avion</h1>
-    <p>Explorez les destinations, réservez vos billets et partez à l'aventure !</p>
-</div>
+    <h1>Formulaire de regle de gestion</h1>
+    <p>Veuillez remplir les informations ci-dessous pour insérer une nouvelle entrée.</p>
 
+    <form action="insertHeureRes" method="POST">
+        <div class="form-group">
+            <label for="heure_av_res">Heure Avant Réservation</label>
+            <input type="time" id="heure_av_res" name="heureAvRes" required />
+        </div>
+
+        <div class="form-group">
+            <label for="heure_ap_res">Heure Après Réservation</label>
+            <input type="time" id="heure_ap_res" name="heureApRes" required />
+        </div>
+
+        <button type="submit" class="btn-submit">Ajouter l'Entrée</button>
+    </form>
+</div>
 </body>
 </html>
