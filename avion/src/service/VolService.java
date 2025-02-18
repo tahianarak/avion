@@ -1,14 +1,121 @@
 package avion.service;
 
 import avion.model.*;
+import jakarta.servlet.http.HttpServletRequest;
 
 import javax.xml.crypto.Data;
-import java.sql.Connection;
-import java.sql.Date;
+import java.sql.*;
+import java.util.HashMap;
 import java.util.List;
 
 public class VolService
 {
+    public void updateVolWithPrixAndPromos( HttpServletRequest request, List<TypeSiege> typeSieges,
+                                           int idVol, Timestamp timestamp, String description, int idVilleDepart, int idVilleArrivee,
+                                           int idAvion, Time time)throws Exception {
+
+        Connection connection=DatabaseConnection.getConnection();
+
+        try {
+
+            connection.setAutoCommit(false);
+
+
+            Vol vol = new Vol(idVol, timestamp, description, idVilleDepart, idVilleArrivee, idAvion, time);
+            Vol.update(connection, vol);
+
+
+            for (TypeSiege siege : typeSieges) {
+
+                double prix = Double.valueOf(request.getParameter("prix_" + siege.getIdTypeSiege()));
+                double pourcentagePromo = Double.valueOf(request.getParameter("pourcentagePromo_" + siege.getIdTypeSiege()));
+                int nbPlacesPromo = Integer.valueOf(request.getParameter("nbPlacesPromo_" + siege.getIdTypeSiege()));
+                int idPromo = Integer.valueOf(request.getParameter("id_promo_" + siege.getIdTypeSiege()));
+
+
+               VolPrixTypeSiege.update(connection, new VolPrixTypeSiege(siege.getIdTypeSiege(), idVol, prix));
+
+
+                Promotion.update(connection, new Promotion(idPromo, idVol, siege.getIdTypeSiege(), pourcentagePromo, nbPlacesPromo));
+            }
+
+            // Validation de la transaction si tout se passe bien
+            connection.commit();
+        } catch (SQLException e) {
+            // En cas d'exception, rollback à partir du savepoint
+            try {
+                connection.rollback();
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+            e.printStackTrace();
+        } finally {
+            try {
+                // Réinitialiser l'auto-commit à true après la transaction
+                connection.setAutoCommit(true);
+                connection.commit();
+                connection.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+     public void createVolWithPrixAndPromos( Timestamp timestamp, String description,
+                                           int idVilleDepart, int idVilleArrivee, int idAvion, Time time,
+                                           List<TypeSiege> typeSieges, HttpServletRequest request)throws Exception {
+
+        Connection connection=DatabaseConnection.getConnection();
+        try
+        {
+
+            connection.setAutoCommit(false);
+            Vol vol = new Vol(-1, timestamp, description, idVilleDepart, idVilleArrivee, idAvion, time);
+            int idVol = insertVol( vol,connection);
+            for (TypeSiege siege : typeSieges)
+            {
+                double prix = Double.valueOf(request.getParameter("prix_" + siege.getIdTypeSiege()));
+                VolPrixTypeSiege.insert(connection, new  VolPrixTypeSiege(siege.getIdTypeSiege(), idVol, prix));
+                double pourcentagePromo = Double.valueOf(request.getParameter("pourcentagePromo_" + siege.getIdTypeSiege()));
+                int nbPlacesPromo = Integer.valueOf(request.getParameter("nbPlacesPromo_" + siege.getIdTypeSiege()));
+                Promotion.insert(connection,new Promotion(-1, idVol, siege.getIdTypeSiege(), pourcentagePromo, nbPlacesPromo));
+            }
+            connection.commit();
+        }
+        catch (SQLException e)
+        {
+            try {
+                connection.rollback();
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+            e.printStackTrace();
+        }
+        finally
+        {
+            try {
+                connection.setAutoCommit(true);
+                connection.commit();
+                connection.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+    public static HashMap<Integer, VolPrixTypeSiege> getPrixForVol(int idVol)throws Exception
+    {
+        try(Connection connection=DatabaseConnection.getConnection())
+        {
+            return VolPrixTypeSiege.getPrixByVol(connection,idVol);
+        }
+    }
+    public static HashMap<Integer, Promotion> getPromByVol(int idVol)throws  Exception
+    {
+        try(Connection connection=DatabaseConnection.getConnection())
+        {
+            return  Promotion.getPromotionsForVol(connection,idVol);
+        }
+    }
     public static  void insertPromoVol(Promotion promotion)throws Exception{
         try(Connection connection=DatabaseConnection.getConnection())
         {
@@ -29,12 +136,10 @@ public class VolService
             Vol.update(connection,vol);
         }
     }
-    public  int insertVol(Vol vol)throws  Exception
+    public  int insertVol(Vol vol,Connection connection)throws  Exception
     {
-        try(Connection connection= DatabaseConnection.getConnection())
-        {
+
             return  Vol.insert(connection,vol);
-        }
     }
 
     public static List<Vol> getAllVolfiltered(Date dateMin,Date dateMax,int idModeleAvion,int idVilleDepart)throws Exception

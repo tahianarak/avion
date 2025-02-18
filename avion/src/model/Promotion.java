@@ -2,6 +2,7 @@ package avion.model;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class Promotion {
@@ -11,6 +12,34 @@ public class Promotion {
     private int idTypeSiege;
     private double remise;
     private int nbPlace;
+
+    // Méthode pour obtenir les promotions d'un vol spécifique
+    public static HashMap<Integer, Promotion> getPromotionsForVol(Connection connection, int idVol) {
+        HashMap<Integer, Promotion> promotionsMap = new HashMap<>();
+        String query = "SELECT * FROM promotion WHERE id_vol = ?";
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            preparedStatement.setInt(1, idVol);
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                while (resultSet.next()) {
+                    int idPromotion = resultSet.getInt("id_promotion");
+                    int idTypeSiege = resultSet.getInt("id_type_siege");
+                    double remise = resultSet.getDouble("remise");
+                    int nbPlace = resultSet.getInt("nb_place");
+
+                    Promotion promotion = new Promotion(idPromotion, idVol, idTypeSiege, remise, nbPlace);
+                    promotionsMap.put(idTypeSiege, promotion); // Ajout de l'objet Promotion dans le HashMap avec l'idTypeSiege comme clé
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return promotionsMap;
+    }
+
+
+
 
     // Constructeur
     public Promotion(int idPromotion, int idVol, int idTypeSiege, double remise, int nbPlace) {

@@ -1,12 +1,16 @@
-<%@page import="avion.model.*, java.util.List"%>
+<%@page import="avion.model.*, java.util.List,java.util.HashMap"%>
 <%
     List<Avion> avions = (List<Avion>) request.getAttribute("avions");
     List<VilleDesservie> villes = (List<VilleDesservie>) request.getAttribute("villes");
     List<TypeSiege> sieges = (List<TypeSiege>) request.getAttribute("sieges");
 
     Vol vol = null;
+     HashMap<Integer, Promotion> promotions=null;
+     HashMap<Integer, VolPrixTypeSiege> prix=null;
     if (request.getAttribute("vol") != null) {
         vol = (Vol) request.getAttribute("vol");
+        promotions=( HashMap<Integer, Promotion>)request.getAttribute("promotions");
+        prix    =(HashMap<Integer, VolPrixTypeSiege>)request.getAttribute("prix");
     }
 %>
 
@@ -96,19 +100,26 @@
                         <!-- Prix pour chaque type de siège -->
                         <div class="input-group">
                             <label for="prix_<%= siege.getIdTypeSiege() %>">Prix :</label>
-                            <input type="number" id="prix_<%= siege.getIdTypeSiege() %>" name="prix_<%= siege.getIdTypeSiege() %>" min="0" step="0.01" placeholder="Prix pour <%= siege.getDescription() %>" required>
+                            <input type="number" id="prix_<%= siege.getIdTypeSiege() %>" name="prix_<%= siege.getIdTypeSiege() %>" min="0" step="0.01"  value="<%if(vol!=null){out.print(prix.get(siege.getIdTypeSiege()).getPrixUnitaire());}%>"   placeholder="Prix pour <%= siege.getDescription() %>" required>
                         </div>
+
 
                         <!-- Nombre de places en promotion -->
                         <div class="input-group">
                             <label for="nbPlacesPromo_<%= siege.getIdTypeSiege() %>">Places en promo :</label>
-                            <input type="number" id="nbPlacesPromo_<%= siege.getIdTypeSiege() %>" name="nbPlacesPromo_<%= siege.getIdTypeSiege() %>" min="0" placeholder="Nombre de places en promo" required>
+                            <input type="number" id="nbPlacesPromo_<%= siege.getIdTypeSiege() %>" name="nbPlacesPromo_<%= siege.getIdTypeSiege() %>"  value="<%if(vol!=null){out.print(promotions.get(siege.getIdTypeSiege()).getNbPlace());}%>"  min="0" placeholder="Nombre de places en promo" required>
                         </div>
+
+                          <% if (vol != null) { %>
+                                 <input type="hidden" name="id_promo_<%= siege.getIdTypeSiege() %>" value="<%= promotions.get(siege.getIdTypeSiege()).getIdPromotion()%>">
+
+                          <% } %>
+
 
                         <!-- Pourcentage de réduction -->
                         <div class="input-group">
                             <label for="pourcentagePromo_<%= siege.getIdTypeSiege() %>">Pourcentage promo :</label>
-                            <input type="number" id="pourcentagePromo_<%= siege.getIdTypeSiege() %>" name="pourcentagePromo_<%= siege.getIdTypeSiege() %>" min="0" max="100" step="1" placeholder="Pourcentage de promo" required>
+                            <input type="number" id="pourcentagePromo_<%= siege.getIdTypeSiege() %>" name="pourcentagePromo_<%= siege.getIdTypeSiege() %>"  value="<%if(vol!=null){out.print(promotions.get(siege.getIdTypeSiege()).getRemise());}%>"  min="0" max="100" step="1" placeholder="Pourcentage de promo" required>
                         </div>
                     </div>
                 <% } %>
@@ -118,6 +129,7 @@
         <!-- Champ caché pour l'ID du vol si nécessaire -->
         <% if (vol != null) { %>
             <input type="hidden" name="idVol" value="<%= vol.getIdVol() %>">
+
         <% } %>
 
         <!-- Bouton de soumission -->
