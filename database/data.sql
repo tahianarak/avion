@@ -85,3 +85,7 @@ VALUES
   ('Carla Lefevre', 'carla.lefevre@example.com', false, 'carla789', '789 Boulevard Saint-Germain, 75006 Paris, France'),
   ('David Moreau', 'david.moreau@example.com', false, 'davidsupersecure', '101 Rue de la Rpublique, 69002 Lyon, France'),
   ('Emma Lemoine', 'emma.lemoine@example.com', false, 'emmapassword321', '202 Rue de la Libert, 13001 Marseille, France');
+
+  INSERT INTO heure_avant_apres_res (heure_av_res, heure_ap_res)
+VALUES 
+('05:00:00', '07:00:00');

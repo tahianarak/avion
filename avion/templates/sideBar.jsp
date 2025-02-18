@@ -15,7 +15,8 @@
         <ul class="sidebar-menu">
             <li><a href="#">Accueil</a></li>
             <li><a href="/avion/vols">vols</a></li>
-            <li><a href="/avion/insertVol">insertion vol</a></li>
+            <li><a href="/avion/volForm">insertion vol</a></li>
+            <li><a href="/avion/insertHeureRes">insertion heure </a></li>
         </ul>
     </div>
 

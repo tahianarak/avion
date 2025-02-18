@@ -89,6 +89,13 @@ CREATE table promotion
    nb_place INTEGER
 );
 
+
+create table heure_avant_apres_res
+(
+   heure_av_res Time,
+   heure_ap_res Time
+);
+
 CREATE VIEW vue_vol_avion AS
 SELECT 
     v.id_vol,
