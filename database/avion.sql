@@ -65,6 +65,7 @@ alter table reservation add column nb_place INTEGER;
 alter table reservation add column place_en_promotion INTEGER;
 alter table reservation add column remise NUMERIC(10,2);
 alter table reservation add column prix_unitaire NUMERIC(10,2);
+alter table reservation add column photo_passport BYTEA;
 
 
 CREATE TABLE modele_siege(

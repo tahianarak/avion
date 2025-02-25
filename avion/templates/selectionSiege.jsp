@@ -18,12 +18,13 @@
 <div class="seats-container">
     <h2>Sélectionnez votre Siège</h2>
 
-    <form action="insertReservation" method="post">
+    <form action="insertReservation" method="post" enctype="multipart/form-data">
         <div class="flight-info">
             <p><strong>Vol:</strong> <%= vol.getVilleDepart().getDescription() %> -> <%= vol.getVilleArrivee().getDescription() %></p>
             <p><strong>Date de Vol:</strong> <%= vol.getDateVol() %></p>
         </div>
         <input type="hidden" name="res:idVol" value="<%=vol.getIdVol()%>">
+
         <div class="seats-group">
             <h3>Sélection des Sièges</h3>
             <table>
@@ -55,6 +56,12 @@
         <div class="seats-quantity">
             <label for="quantity">Nombre de places:</label>
             <input type="number" id="quantity" name="res:nbPlace" min="1" value="1" required>
+        </div>
+
+        <!-- Nouveau champ pour le téléchargement d'un fichier -->
+        <div class="file-upload">
+            <label for="file">Téléchargez un fichier (image, document, etc.) :</label>
+            <input type="file" name="file" id="file"/>
         </div>
 
         <div class="submit-group">
@@ -142,6 +149,18 @@
     }
 
     .seats-quantity label {
+        font-weight: bold;
+        margin-right: 10px;
+    }
+
+    /* Nouveau style pour le champ "Télécharger un fichier" */
+    .file-upload {
+        margin-top: 20px;
+        font-size: 16px;
+        color: #555;
+    }
+
+    .file-upload label {
         font-weight: bold;
         margin-right: 10px;
     }

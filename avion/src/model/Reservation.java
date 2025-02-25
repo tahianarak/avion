@@ -1,11 +1,23 @@
 package avion.model;
 
+import jakarta.servlet.http.Part;
+
+import java.io.InputStream;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Reservation {
 
+    public Part getPhotoPassport() {
+        return photoPassport;
+    }
+
+    public void setPhotoPassport(Part photoPassport) {
+        this.photoPassport = photoPassport;
+    }
+
+    Part photoPassport;
     private int idReservation;
     private Timestamp dateReservation;
     private int idUser;
@@ -225,8 +237,8 @@ public class Reservation {
     }
 
     // Méthode pour insérer une réservation avec le prix du billet
-    public static void insert(Connection connection, Reservation reservation) {
-        String query = "INSERT INTO reservation (date_reservation, id_user, id_vol, id_type_siege, prix_billet,nb_place,place_en_promotion,remise,prix_unitaire) VALUES (?, ?, ?, ?, ?,?,?,?,?)";
+    public static void insert(Connection connection, Reservation reservation)throws Exception {
+        String query = "INSERT INTO reservation (date_reservation, id_user, id_vol, id_type_siege, prix_billet,nb_place,place_en_promotion,remise,prix_unitaire,photo_passport) VALUES (?, ?, ?, ?, ?,?,?,?,?,?)";
         try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
             preparedStatement.setTimestamp(1, reservation.getDateReservation());
             preparedStatement.setInt(2, reservation.getIdUser());
@@ -237,6 +249,12 @@ public class Reservation {
             preparedStatement.setInt(7,reservation.getPlaceEnPromotion());
             preparedStatement.setDouble(8,reservation.getRemise());
             preparedStatement.setDouble(9,reservation.getPrixUnitaire());
+
+            Part fichierPart=reservation.getPhotoPassport();
+            InputStream fichierInputStream = fichierPart.getInputStream();
+            byte[] fichierData = new byte[(int) fichierPart.getSize()];
+            fichierInputStream.read(fichierData);
+            preparedStatement.setBytes(10,fichierData);
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();

@@ -3,6 +3,7 @@ package avion.controller;
 import avion.model.*;
 import avion.service.ReservationService;
 import avion.service.VolService;
+import jakarta.servlet.http.Part;
 import mg.ituprom16.affloader.ModelView;
 import mg.ituprom16.annotation.*;
 import mg.ituprom16.annotation.authentification.ConfiguredAuth;
@@ -18,7 +19,13 @@ import java.util.List;
 @Controller
 public class ResController
 {
-
+    @RestApi
+    @URL(valeur = "/reservationsRest")
+    @ConfiguredAuth(value = "Authentified")
+    public List<Reservation> getAllReservationsRest(MySession session)throws Exception
+    {
+        return ReservationService.getAllByIDUser(((User)session.get("user")).getIdUser());
+    }
     @URL(valeur = "/reservations")
     @ConfiguredAuth(value = "Authentified")
     public ModelView getAllReservations(MySession session)throws Exception
@@ -28,7 +35,6 @@ public class ResController
         mv.addObject("reservations",reservations);
         return mv;
     }
-
     @URL(valeur = "/annulerReservation")
     @ConfiguredAuth(value = "Authentified")
     public ModelView annulerReservation(@Match(param = "idReservation") int idReservation,MySession session)throws Exception
@@ -58,7 +64,7 @@ public class ResController
     @Post
     @URL(valeur = "/insertReservation")
     @ConfiguredAuth(value = "Authentified")
-    public ModelView insertReservation(@Match(param = "res") Reservation reservation, MySession session)throws Exception
+    public ModelView insertReservation(@Match(param = "res") Reservation reservation, MySession session,@Match(param="file") Part file)throws Exception
     {
         try {
             java.util.Date dateDepart = new java.util.Date();
@@ -67,6 +73,7 @@ public class ResController
 
             reservation.setIdUser(idUser);
             reservation.setDateReservation(date);
+            reservation.setPhotoPassport(file);
 
             ReservationService.insertReservation(reservation);
             return new ModelView("/accueil.jsp");
