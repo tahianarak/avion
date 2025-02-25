@@ -13,7 +13,7 @@ public class Vol {
 
 
 
-
+    public Vol(){}
 
 
     public VilleDesservie getVilleDepart() {
@@ -60,6 +60,25 @@ public class Vol {
     }
 
 
+    public static  int getPlaceRestante(Connection connection,int idVol,int idTypeSiege)throws Exception
+    {
+        String sql="select place_restant from siege_restant_vol where id_vol=? and id_type_siege=?";
+        int ans=-1;
+        try(PreparedStatement statement=connection.prepareStatement(sql))
+        {
+            statement.setInt(1,idVol);
+            statement.setInt(2,idTypeSiege);
+
+            try(ResultSet rs=statement.executeQuery())
+            {
+                if(rs.next())
+                {
+                    ans=rs.getInt("place_restant");
+                }
+            }
+        }
+        return  ans;
+    }
 
     // Constructeur
     public Vol(int idVol, Timestamp dateVol, String description, int idVilleDepart, int idVilleArrivee, int idAvion, Time duree) {

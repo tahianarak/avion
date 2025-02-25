@@ -8,6 +8,16 @@ import java.util.List;
 public class VolPrixTypeSiege {
 
     private int idTypeSiege;
+
+    public TypeSiege getTypeSiege() {
+        return typeSiege;
+    }
+
+    public void setTypeSiege(TypeSiege typeSiege) {
+        this.typeSiege = typeSiege;
+    }
+
+    TypeSiege typeSiege;
     private int idVol;
     private double prixUnitaire;
 
@@ -24,6 +34,7 @@ public class VolPrixTypeSiege {
                     double prixUnitaire = resultSet.getDouble("prix_unitaire");
 
                     VolPrixTypeSiege volPrixTypeSiege = new VolPrixTypeSiege(idTypeSiege, idVol, prixUnitaire);
+                    volPrixTypeSiege.typeSiege=TypeSiege.getById(connection,idTypeSiege);
                     volPrixTypeSiegesMap.put(idTypeSiege, volPrixTypeSiege); // Ajout dans le HashMap avec idTypeSiege comme clé
                 }
             }

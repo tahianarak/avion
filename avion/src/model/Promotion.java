@@ -13,6 +13,16 @@ public class Promotion {
     private double remise;
     private int nbPlace;
 
+    public int getNbPlaceRestant() {
+        return nbPlaceRestant;
+    }
+
+    public void setNbPlaceRestant(int nbPlaceRestant) {
+        this.nbPlaceRestant = nbPlaceRestant;
+    }
+
+    int nbPlaceRestant;
+
     // Méthode pour obtenir les promotions d'un vol spécifique
     public static HashMap<Integer, Promotion> getPromotionsForVol(Connection connection, int idVol) {
         HashMap<Integer, Promotion> promotionsMap = new HashMap<>();
@@ -90,6 +100,54 @@ public class Promotion {
     public void setNbPlace(int nbPlace) {
         this.nbPlace = nbPlace;
     }
+    public static boolean decrementerNbPlaceRestant(Connection connection, int idPromotion,int nb) {
+        boolean isUpdated = false;
+        String query = "UPDATE promotion SET nb_place_restant = nb_place_restant - "+nb+" WHERE id_promotion = ? AND nb_place_restant > 0";
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            preparedStatement.setInt(1, idPromotion);
+
+            // Exécution de la mise à jour
+            int rowsAffected = preparedStatement.executeUpdate();
+
+            // Si une ligne a été mise à jour, la promotion a été modifiée
+            if (rowsAffected > 0) {
+                isUpdated = true;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return isUpdated;
+    }
+
+    public static Promotion getPromotionByVolAndTypeSiege(Connection connection, int idVol, int idTypeSiege) {
+        Promotion promotion = null;
+        String query = "SELECT * FROM promotion WHERE id_vol = ? AND id_type_siege = ?";
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            preparedStatement.setInt(1, idVol);
+            preparedStatement.setInt(2, idTypeSiege);
+
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                if (resultSet.next()) {
+                    int idPromotion = resultSet.getInt("id_promotion");
+                    double remise = resultSet.getDouble("remise");
+                    int nbPlace = resultSet.getInt("nb_place");
+                    int nbPlaceRestant = resultSet.getInt("nb_place_restant");
+
+                    // Création de l'objet Promotion
+                    promotion = new Promotion(idPromotion, idVol, idTypeSiege, remise, nbPlace);
+                    promotion.setNbPlaceRestant(nbPlaceRestant); // On initialise aussi le nombre de places restantes
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return promotion; // Retourne null si aucune promotion n'a été trouvée
+    }
+
 
     // Méthode pour obtenir toutes les promotions
     public static List<Promotion> getAll(Connection connection) {
@@ -105,8 +163,10 @@ public class Promotion {
                 int idTypeSiege = resultSet.getInt("id_type_siege");
                 double remise = resultSet.getDouble("remise");
                 int nbPlace = resultSet.getInt("nb_place");
+                int nbPlaceRestant=resultSet.getInt("nb_place_restant");
 
                 Promotion promotion = new Promotion(idPromotion, idVol, idTypeSiege, remise, nbPlace);
+                promotion.setNbPlaceRestant(nbPlaceRestant);
                 promotions.add(promotion);
             }
 
@@ -119,12 +179,13 @@ public class Promotion {
 
     // Méthode pour insérer une promotion
     public static void insert(Connection connection, Promotion promotion) {
-        String query = "INSERT INTO promotion (id_vol, id_type_siege, remise, nb_place) VALUES (?, ?, ?, ?)";
+        String query = "INSERT INTO promotion (id_vol, id_type_siege, remise, nb_place,nb_place_restant) VALUES (?, ?, ?, ?,?)";
         try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
             preparedStatement.setInt(1, promotion.getIdVol());
             preparedStatement.setInt(2, promotion.getIdTypeSiege());
             preparedStatement.setDouble(3, promotion.getRemise());
             preparedStatement.setInt(4, promotion.getNbPlace());
+            preparedStatement.setInt(5, promotion.getNbPlace());
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -133,13 +194,14 @@ public class Promotion {
 
     // Méthode pour mettre à jour une promotion
     public static void update(Connection connection, Promotion promotion) {
-        String query = "UPDATE promotion SET id_vol = ?, id_type_siege = ?, remise = ?, nb_place = ? WHERE id_promotion = ?";
+        String query = "UPDATE promotion SET id_vol = ?, id_type_siege = ?, remise = ?, nb_place = ?,nb_place_restant=? WHERE id_promotion = ?";
         try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
             preparedStatement.setInt(1, promotion.getIdVol());
             preparedStatement.setInt(2, promotion.getIdTypeSiege());
             preparedStatement.setDouble(3, promotion.getRemise());
             preparedStatement.setInt(4, promotion.getNbPlace());
-            preparedStatement.setInt(5, promotion.getIdPromotion());
+            preparedStatement.setInt(5,promotion.getNbPlaceRestant());
+            preparedStatement.setInt(6, promotion.getIdPromotion());
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();

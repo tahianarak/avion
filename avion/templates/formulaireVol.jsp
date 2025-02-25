@@ -35,19 +35,19 @@
                     <!-- Champ pour la date du vol -->
                     <div class="input-group">
                         <label for="dateVol">Date du Vol</label>
-                        <input type="datetime-local" id="dateVol" name="dateVol" required value="<% if (vol != null) { out.print(vol.getDateVol()); } %>">
+                        <input type="datetime-local" id="dateVol" name="vol:dateVol" required value="<% if (vol != null) { out.print(vol.getDateVol()); } %>">
                     </div>
 
                     <!-- Champ pour la description -->
                     <div class="input-group">
                         <label for="description">Description</label>
-                        <input type="text" value="<% if (vol != null) { out.print(vol.getDescription()); } %>" id="description" name="description" placeholder="Description du vol" required>
+                        <input type="text" value="<% if (vol != null) { out.print(vol.getDescription()); } %>" id="description" name="vol:description" placeholder="Description du vol" required>
                     </div>
 
                     <!-- Ville de départ -->
                     <div class="input-group">
                         <label for="idVilleDepart">Ville de départ</label>
-                        <select name="idVilleDepart">
+                        <select name="vol:idVilleDepart">
                             <% if (vol != null) { %>
                                 <option value="<%= vol.getVilleDepart().getIdVille() %>"><%= vol.getVilleDepart().getDescription() %></option>
                             <% } %>
@@ -60,7 +60,7 @@
                     <!-- Ville d'arrivée -->
                     <div class="input-group">
                         <label for="idVilleArrivee">Ville d'arrivée</label>
-                        <select name="idVilleArrivee">
+                        <select name="vol:idVilleArrivee">
                             <% if (vol != null) { %>
                                 <option value="<%= vol.getVilleArrivee().getIdVille() %>"><%= vol.getVilleArrivee().getDescription() %></option>
                             <% } %>
@@ -73,7 +73,7 @@
                     <!-- ID de l'avion -->
                     <div class="input-group">
                         <label for="idAvion">ID de l'Avion</label>
-                        <select name="idAvion">
+                        <select name="vol:idAvion">
                             <% if (vol != null) { %>
                                 <option value="<%= vol.getIdAvion() %>"><%= vol.getIdAvion() %></option>
                             <% } %>
@@ -85,8 +85,8 @@
 
                     <!-- Durée -->
                     <div class="input-group">
-                        <label for="duree">Durée</label>
-                        <input type="time" id="duree" name="duree" value="<% if (vol != null) { out.print(vol.getDuree()); } %>" required>
+                        <label for="vol:duree">Durée</label>
+                        <input type="time" id="duree" name="vol:duree" value="<% if (vol != null) { out.print(vol.getDuree()); } %>" required>
                     </div>
                 </div>
             </div>

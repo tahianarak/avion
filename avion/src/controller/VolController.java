@@ -14,6 +14,7 @@ import java.text.SimpleDateFormat;
 import java.sql.Time;
 import java.util.Date;
 
+import mg.ituprom16.annotation.authentification.ConfiguredAuth;
 import mg.ituprom16.session.*;
 
 import java.sql.SQLException;
@@ -26,6 +27,7 @@ import static avion.service.VolService.insertVolPrix;
 public class VolController
 {
     @URL(valeur = "/volsFiltres")
+    @ConfiguredAuth(value = "Authentified")
     public ModelView volsFiltres(MySession session,@Match(param = "dateMin") String dateMin,@Match(param = "dateMax") String dateMax,@Match(param = "avion") int idModeleAvion,@Match(param = "villeDepart") int villeDepart) throws Exception {
         ModelView mv=getAllVols(session);
         List<Vol> vols=VolService.getAllVolfiltered(java.sql.Date.valueOf(dateMin),java.sql.Date.valueOf(dateMax),idModeleAvion,villeDepart);
@@ -33,9 +35,9 @@ public class VolController
         return  mv;
     }
     @URL(valeur = "/vols")
+    @ConfiguredAuth(value = "Authentified")
     public ModelView getAllVols(MySession session) throws Exception {
-        if(((User)session.get("user")).isStatus())
-        {
+
             ModelView mv=new ModelView("/listeVol.jsp");
             List<VilleDesservie> villeDesservies = VilleDesservieService.getAllVille();
             List<ModeleAvion> avions= AvionService.getAllModeleAvion();
@@ -44,17 +46,11 @@ public class VolController
             mv.addObject("villes",villeDesservies);
             mv.addObject("avions",avions);
             return  mv;
-        }
-        else
-        {
-            ModelView mv=new ModelView("/error.jsp");
-            mv.addObject("error","oops une erreur s'est produite");
-            return  mv;
-        }
     }
 
 
     @URL(valeur = "/volFormUpdate")
+    @ConfiguredAuth(value = "admin")
     public ModelView volFormUpdate(@Match(param = "idVol") int idVol,MySession session)
     {
         ModelView mv=new ModelView("/formulaireVol.jsp");
@@ -86,6 +82,7 @@ public class VolController
         return  mv;
     }
     @URL(valeur = "/volForm")
+    @ConfiguredAuth(value = "admin")
     public ModelView volForm(MySession session)
     {
         ModelView mv=new ModelView("/formulaireVol.jsp");
@@ -109,33 +106,28 @@ public class VolController
 
         }
         return  mv;
+
     }
     @Post
     @URL(valeur = "/insertVol")
-    public ModelView insertVol(HttpServletRequest request,MySession session,@Match(param = "dateVol") String dateVol,@Match(param = "description") String description,@Match(param = "idVilleDepart") int idVilleDepart,@Match(param = "idVilleArrivee") int idVilleArrivee,@Match(param = "idAvion") int idAvion,@Match(param = "duree") String duree) {
+    @ConfiguredAuth(value = "admin")
+    public ModelView insertVol(HttpServletRequest request,MySession session,@Match(param = "vol") Vol vol) {
         try
         {
             if(((User)session.get("user")).isStatus()==false)
             {throw new Exception("oops quelque chose s'est mal passée");}
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
-            LocalDateTime localDateTime = LocalDateTime.parse(dateVol, formatter);
-            Timestamp timestamp = Timestamp.valueOf(localDateTime);
 
-            SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
-
-            Date date = sdf.parse(duree);
-            Time time = new Time(date.getTime());
             List<TypeSiege> typeSieges=AvionService.getAllTypeSiege();
             VolService service=new VolService();
             if(request.getParameter("idVol")==null)
             {
-                Vol vol = new Vol(-1, timestamp, description, idVilleDepart, idVilleArrivee, idAvion, time);
-                service.createVolWithPrixAndPromos(timestamp,description,idVilleDepart,idVilleArrivee,idAvion,time,typeSieges,request);
+                service.createVolWithPrixAndPromos(vol,typeSieges,request);
             }
             else
             {
                 int idVol=Integer.valueOf(request.getParameter("idVol"));
-                service.updateVolWithPrixAndPromos(request,typeSieges,idVol,timestamp,description,idVilleDepart,idVilleArrivee,idAvion,time);
+                vol.setIdVol(idVol);
+                service.updateVolWithPrixAndPromos(request,typeSieges,vol);
             }
         }
         catch (Exception e)

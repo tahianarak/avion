@@ -10,7 +10,6 @@ public class ModeleSiege {
     private int idModeleAvion;
     private int nombreSiege;
 
-
     // Constructeur
     public ModeleSiege(int idTypeSiege, int idModeleAvion, int nombreSiege) {
         this.idTypeSiege = idTypeSiege;

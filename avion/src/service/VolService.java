@@ -11,8 +11,7 @@ import java.util.List;
 public class VolService
 {
     public void updateVolWithPrixAndPromos( HttpServletRequest request, List<TypeSiege> typeSieges,
-                                           int idVol, Timestamp timestamp, String description, int idVilleDepart, int idVilleArrivee,
-                                           int idAvion, Time time)throws Exception {
+                                           Vol vol)throws Exception {
 
         Connection connection=DatabaseConnection.getConnection();
 
@@ -20,18 +19,16 @@ public class VolService
 
             connection.setAutoCommit(false);
 
-
-            Vol vol = new Vol(idVol, timestamp, description, idVilleDepart, idVilleArrivee, idAvion, time);
             Vol.update(connection, vol);
 
 
+            int idVol=vol.getIdVol();
             for (TypeSiege siege : typeSieges) {
 
                 double prix = Double.valueOf(request.getParameter("prix_" + siege.getIdTypeSiege()));
                 double pourcentagePromo = Double.valueOf(request.getParameter("pourcentagePromo_" + siege.getIdTypeSiege()));
                 int nbPlacesPromo = Integer.valueOf(request.getParameter("nbPlacesPromo_" + siege.getIdTypeSiege()));
                 int idPromo = Integer.valueOf(request.getParameter("id_promo_" + siege.getIdTypeSiege()));
-
 
                VolPrixTypeSiege.update(connection, new VolPrixTypeSiege(siege.getIdTypeSiege(), idVol, prix));
 
@@ -53,7 +50,7 @@ public class VolService
             try {
                 // Réinitialiser l'auto-commit à true après la transaction
                 connection.setAutoCommit(true);
-                connection.commit();
+
                 connection.close();
             } catch (SQLException e) {
                 e.printStackTrace();
@@ -61,16 +58,12 @@ public class VolService
         }
     }
 
-     public void createVolWithPrixAndPromos( Timestamp timestamp, String description,
-                                           int idVilleDepart, int idVilleArrivee, int idAvion, Time time,
-                                           List<TypeSiege> typeSieges, HttpServletRequest request)throws Exception {
+     public void createVolWithPrixAndPromos( Vol vol, List<TypeSiege> typeSieges, HttpServletRequest request)throws Exception {
 
         Connection connection=DatabaseConnection.getConnection();
         try
         {
-
             connection.setAutoCommit(false);
-            Vol vol = new Vol(-1, timestamp, description, idVilleDepart, idVilleArrivee, idAvion, time);
             int idVol = insertVol( vol,connection);
             for (TypeSiege siege : typeSieges)
             {
@@ -95,7 +88,7 @@ public class VolService
         {
             try {
                 connection.setAutoCommit(true);
-                connection.commit();
+
                 connection.close();
             } catch (SQLException e) {
                 e.printStackTrace();
