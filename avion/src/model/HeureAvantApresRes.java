@@ -50,10 +50,9 @@ public class HeureAvantApresRes {
     }
 
     // READ: Lire une entrée de la table par un identifiant (ici, on suppose qu'il y a une colonne `id` dans la table)
-    public static HeureAvantApresRes read(Connection conn, int id) throws SQLException {
-        String query = "SELECT * FROM heure_avant_apres_res WHERE id = ?";
+    public static HeureAvantApresRes read(Connection conn) throws SQLException {
+        String query = "SELECT * FROM heure_avant_apres_res";
         try (PreparedStatement stmt = conn.prepareStatement(query)) {
-            stmt.setInt(1, id);
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
                 Time heureAvRes = rs.getTime("heure_av_res");

@@ -61,6 +61,12 @@ CREATE TABLE reservation(
    FOREIGN KEY(id_vol) REFERENCES vol(id_vol)
 );
 
+alter table reservation add column nb_place INTEGER;
+alter table reservation add column place_en_promotion INTEGER;
+alter table reservation add column remise NUMERIC(10,2);
+alter table reservation add column prix_unitaire NUMERIC(10,2);
+
+
 CREATE TABLE modele_siege(
    id_type_siege INTEGER,
    id_modele_avion INTEGER,
@@ -89,12 +95,53 @@ CREATE table promotion
    nb_place INTEGER
 );
 
+alter table promotion add column nb_place_restant INTEGER;
+
 
 create table heure_avant_apres_res
 (
    heure_av_res Time,
    heure_ap_res Time
 );
+
+
+
+
+create or replace view vol_siege as
+Select
+   v.id_vol,
+   ms.id_type_siege,
+   ms.nombre_siege
+
+FROM
+    vol v 
+JOIN 
+    avion a on v.id_avion=a.id_avion
+JOIN
+    modele_siege ms on a.id_modele_avion=ms.id_modele_avion;
+
+
+create or replace view vol_siege_vendu as 
+
+ select
+       id_vol,
+       id_type_siege,
+       sum(nb_place) as nb_place  
+from reservation 
+group by id_vol,id_type_siege;
+
+
+create or replace view siege_restant_vol as
+
+select
+     vs.id_vol,
+     vs.id_type_siege,
+     vs.nombre_siege-coalesce(srv.nb_place,0) as place_restant 
+from vol_siege as vs
+ left join vol_siege_vendu srv on vs.id_vol=srv.id_vol and vs.id_type_siege=srv.id_type_siege;
+
+
+
 
 CREATE VIEW vue_vol_avion AS
 SELECT 

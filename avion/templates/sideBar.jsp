@@ -1,3 +1,9 @@
+<%@ page import="avion.model.*"%>
+
+<%
+    String role =(String)session.getAttribute("role");
+%>
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -15,8 +21,11 @@
         <ul class="sidebar-menu">
             <li><a href="#">Accueil</a></li>
             <li><a href="/avion/vols">vols</a></li>
-            <li><a href="/avion/volForm">insertion vol</a></li>
-            <li><a href="/avion/insertHeureRes">insertion heure </a></li>
+            <%if(role.equals("admin")){%>
+                <li><a href="/avion/volForm">insertion vol</a></li>
+                <li><a href="/avion/insertHeureRes">insertion heure </a></li>
+            <%}%>
+            <li><a href="/avion/reservations">liste reservations </a></li>
         </ul>
     </div>
 

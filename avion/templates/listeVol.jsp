@@ -71,7 +71,12 @@
                 <td><%= vol.getDuree() %></td>
                 <td><%= vol.getIdAvion() %></td>
                 <td><%= vol.getDescription() %></td>
-                <td><a href="volFormUpdate?idVol=<%= vol.getIdVol() %>">Modifier</a></td>
+
+                <td>
+                    <% if(session.getAttribute("role").equals("admin")){%>
+                            <a href="volFormUpdate?idVol=<%= vol.getIdVol() %>"><button>Modifier<button></a>
+                    <%}%>
+                <a href="selectionSiege?idVol=<%= vol.getIdVol() %>"><button>reserver</button></a></td>
             </tr>
         <% } %>
         </tbody>
