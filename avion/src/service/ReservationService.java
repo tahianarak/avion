@@ -64,9 +64,9 @@ public class ReservationService
                     int ala = reservation.getNbPlace();
                     if (ala > promotion.getNbPlaceRestant()) {
                         ala = promotion.getNbPlaceRestant();
-                        prixReservation = prixReservation - volPrixTypeSiege.getPrixUnitaire() * 0.01* promotion.getRemise() * ala;
-                        Promotion.decrementerNbPlaceRestant(connection, promotion.getIdPromotion(), ala);
                     }
+                    prixReservation = prixReservation - volPrixTypeSiege.getPrixUnitaire() * 0.01* promotion.getRemise() * ala;
+                    Promotion.decrementerNbPlaceRestant(connection, promotion.getIdPromotion(), ala);
                     reservation.setPlaceEnPromotion(ala);
                     reservation.setRemise( promotion.getRemise());
 
