@@ -54,8 +54,13 @@
 
         <!-- Nouveau champ pour le nombre de places -->
         <div class="seats-quantity">
-            <label for="quantity">Nombre de places:</label>
+            <label for="quantity">Nombre de places pour adultes:</label>
             <input type="number" id="quantity" name="res:nbPlace" min="1" value="1" required>
+        </div>
+
+        <div class="seats-quantity">
+                    <label for="quantity">Nombre de places pour enfants:</label>
+                    <input type="number" id="quantity" name="res:placeEnfant" min="1" value="1" required>
         </div>
 
         <!-- Nouveau champ pour le téléchargement d'un fichier -->
