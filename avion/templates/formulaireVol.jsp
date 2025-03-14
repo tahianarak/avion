@@ -35,21 +35,28 @@
                     <!-- Champ pour la date du vol -->
                     <div class="input-group">
                         <label for="dateVol">Date du Vol</label>
-                        <input type="datetime-local" id="dateVol" name="vol:dateVol" required value="<% if (vol != null) { out.print(vol.getDateVol()); } %>">
+                        <input type="datetime-local" id="dateVol" name="vol:dateVol" required value='<% if (request.getParameter("vol:dateVol")!=null) { out.print(request.getParameter("vol:dateVol")); } %><% if (vol != null) { out.print(vol.getDateVol()); } %>'>
                     </div>
 
                     <!-- Champ pour la description -->
                     <div class="input-group">
+                        <%if(request.getAttribute("vol:description_errors")!=null){out.print("<label style='color:red;'>"+request.getAttribute("vol:description_errors")+"</label><br>");}%>
                         <label for="description">Description</label>
-                        <input type="text" value="<% if (vol != null) { out.print(vol.getDescription()); } %>" id="description" name="vol:description" placeholder="Description du vol" required>
+                        <input type="text" value='<% if(  request.getParameter("vol:description")!=null) { out.print(request.getParameter("vol:description")); } %><% if (vol != null) { out.print(vol.getDescription()); } %>' id="description" name="vol:description" placeholder="Description du vol" required>
                     </div>
 
                     <!-- Ville de départ -->
                     <div class="input-group">
                         <label for="idVilleDepart">Ville de départ</label>
                         <select name="vol:idVilleDepart">
+
                             <% if (vol != null) { %>
                                 <option value="<%= vol.getVilleDepart().getIdVille() %>"><%= vol.getVilleDepart().getDescription() %></option>
+                            <% } %>
+                            <% for (VilleDesservie ville : villes) { %>
+                            	<% if (request.getParameter("vol:idVilleDepart") != null && ville.getIdVille()==Integer.valueOf(request.getParameter("vol:idVilleDepart"))) { %>
+                                	<option value="<%= ville.getIdVille() %>"><%= ville.getDescription() %></option>
+                           		<% } %>
                             <% } %>
                             <% for (VilleDesservie ville : villes) { %>
                                 <option value="<%= ville.getIdVille() %>"><%= ville.getDescription() %></option>
@@ -61,11 +68,17 @@
                     <div class="input-group">
                         <label for="idVilleArrivee">Ville d'arrivée</label>
                         <select name="vol:idVilleArrivee">
+
                             <% if (vol != null) { %>
                                 <option value="<%= vol.getVilleArrivee().getIdVille() %>"><%= vol.getVilleArrivee().getDescription() %></option>
                             <% } %>
                             <% for (VilleDesservie ville : villes) { %>
-                                <option value="<%= ville.getIdVille() %>"><%= ville.getDescription() %></option>
+                            	<% if (request.getParameter("vol:idVilleArrivee") != null && ville.getIdVille()==Integer.valueOf(request.getParameter("vol:idVilleArrivee"))) { %>
+                                	<option value="<%= ville.getIdVille() %>"><%= ville.getDescription() %></option>
+                           		<% } %>
+                            <% } %>
+                            <% for (VilleDesservie ville : villes) { %>
+                                	<option value="<%= ville.getIdVille() %>"><%= ville.getDescription() %></option>
                             <% } %>
                         </select>
                     </div>
@@ -78,6 +91,12 @@
                                 <option value="<%= vol.getIdAvion() %>"><%= vol.getIdAvion() %></option>
                             <% } %>
                             <% for (Avion avion : avions) { %>
+                            	<% if (request.getParameter("vol:idAvion") != null && avion.getIdAvion()==Integer.valueOf(request.getParameter("vol:idAvion"))) { %>
+                                	<option value='<%= request.getParameter("vol:idAvion")  %>'>Avion numéro <%=  request.getParameter("vol:idAvion")  %></option>
+                           		<% } %>
+                                <option value="<%= avion.getIdAvion() %>">Avion numéro <%= avion.getIdAvion() %></option>
+                            <% } %>
+                            <% for (Avion avion : avions) { %>
                                 <option value="<%= avion.getIdAvion() %>">Avion numéro <%= avion.getIdAvion() %></option>
                             <% } %>
                         </select>
@@ -86,7 +105,7 @@
                     <!-- Durée -->
                     <div class="input-group">
                         <label for="vol:duree">Durée</label>
-                        <input type="time" id="duree" name="vol:duree" value="<% if (vol != null) { out.print(vol.getDuree()); } %>" required>
+                        <input type="time" id="duree" name="vol:duree" value='<% if (request.getParameter("vol:duree")!=null) { out.print(request.getParameter("vol:duree")); } %><% if (vol != null) { out.print(vol.getDuree()); } %>' required>
                     </div>
                 </div>
             </div>
@@ -100,18 +119,18 @@
                         <!-- Prix pour chaque type de siège -->
                         <div class="input-group">
                             <label for="prix_<%= siege.getIdTypeSiege() %>">Prix :</label>
-                            <input type="number" id="prix_<%= siege.getIdTypeSiege() %>" name="prix_<%= siege.getIdTypeSiege() %>" min="0" step="0.01"  value="<%if(vol!=null){out.print(prix.get(siege.getIdTypeSiege()).getPrixUnitaire());}%>"   placeholder="Prix pour <%= siege.getDescription() %>" required>
+                            <input type="number" id="prix_<%= siege.getIdTypeSiege() %>" name="prix_<%= siege.getIdTypeSiege() %>" min="0" step="0.01"  value='<% if(  request.getParameter("prix_"+siege.getIdTypeSiege())!=null) { out.print( request.getParameter("prix_"+siege.getIdTypeSiege())); } %><%if(vol!=null){out.print(prix.get(siege.getIdTypeSiege()).getPrixUnitaire());}%>'  placeholder="Prix pour <%= siege.getDescription() %>" required>
                         </div>
 
 
                         <!-- Nombre de places en promotion -->
                         <div class="input-group">
                             <label for="nbPlacesPromo_<%= siege.getIdTypeSiege() %>">Places en promo :</label>
-                            <input type="number" id="nbPlacesPromo_<%= siege.getIdTypeSiege() %>" name="nbPlacesPromo_<%= siege.getIdTypeSiege() %>"  value="<%if(vol!=null){out.print(promotions.get(siege.getIdTypeSiege()).getNbPlace());}%>"  min="0" placeholder="Nombre de places en promo" required>
+                            <input type="number" id="nbPlacesPromo_<%= siege.getIdTypeSiege() %>" name="nbPlacesPromo_<%= siege.getIdTypeSiege() %>"  value='<% if( request.getParameter("nbPlacesPromo_"+siege.getIdTypeSiege())!=null) { out.print( request.getParameter("nbPlacesPromo_"+siege.getIdTypeSiege())); } %><%if(vol!=null){out.print(promotions.get(siege.getIdTypeSiege()).getNbPlace());}%>'  min="0" placeholder="Nombre de places en promo" required>
                         </div>
 
                           <% if (vol != null) { %>
-                                 <input type="hidden" name="id_promo_<%= siege.getIdTypeSiege() %>" value="<%= promotions.get(siege.getIdTypeSiege()).getIdPromotion()%>">
+                                 <input type="hidden" name="id_promo_<%= siege.getIdTypeSiege() %>" value='<% if (request.getParameter("id_promo_"+siege.getIdTypeSiege())!=null) { out.print( request.getParameter("id_promo_"+siege.getIdTypeSiege())); } %><%= promotions.get(siege.getIdTypeSiege()).getIdPromotion()%>'>
 
                           <% } %>
 
@@ -119,7 +138,7 @@
                         <!-- Pourcentage de réduction -->
                         <div class="input-group">
                             <label for="pourcentagePromo_<%= siege.getIdTypeSiege() %>">Pourcentage promo :</label>
-                            <input type="number" id="pourcentagePromo_<%= siege.getIdTypeSiege() %>" name="pourcentagePromo_<%= siege.getIdTypeSiege() %>"  value="<%if(vol!=null){out.print(promotions.get(siege.getIdTypeSiege()).getRemise());}%>"  min="0" max="100" step="1" placeholder="Pourcentage de promo" required>
+                            <input type="number" id="pourcentagePromo_<%= siege.getIdTypeSiege() %>" name="pourcentagePromo_<%= siege.getIdTypeSiege() %>"  value='<% if (request.getParameter("pourcentagePromo_"+siege.getIdTypeSiege())!=null) { out.print( request.getParameter("pourcentagePromo_"+siege.getIdTypeSiege())); } %><%if(vol!=null){out.print(promotions.get(siege.getIdTypeSiege()).getRemise());}%>'  min="0" max="100" step="1" placeholder="Pourcentage de promo" required>
                         </div>
                     </div>
                 <% } %>
